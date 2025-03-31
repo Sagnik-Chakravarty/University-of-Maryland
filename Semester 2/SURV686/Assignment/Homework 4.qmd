@@ -1,0 +1,393 @@
+---
+title: "SURV686-HW4"
+author: "Sagnik Chakravarty"
+format:
+  pdf:
+    pdf-engine: xelatex
+toc: False
+editor: visual
+header-includes:
+  - \usepackage{hyperref}
+---
+
+```{r fig.height=20, fig.width=25, echo= FALSE, warning=FALSE, message=FALSE}
+library(showtext)
+library(ggplot2)
+library(sys)
+library(stringr)
+library(dplyr)
+library(knitr)
+library(kableExtra)
+
+# Add your handwriting font
+font_add("my_handwriting", "/Users/sagnikchakravarty/Desktop/UMD_College_Work/SagnikHandwriting-Regular.ttf")  # Specify the correct path to your font file
+showtext_auto()
+
+# The sentence to convert
+sentence <- "I pledge on my honor that I have not given or received any unauthorized assistance on this assignment/examination."
+
+
+# Wrap the sentence to prevent overflow
+wrapped_sentence <- str_wrap(sentence, width = 50)  # Adjust width for your needs
+
+# Create the plot using your handwriting font
+ggplot() +
+  geom_text(aes(x = 0, y = 0.5, label = wrapped_sentence),  # Use wrapped sentence
+            family = "my_handwriting", size = 40, hjust = 0.5, vjust = -0.3) +
+  geom_text(aes(x = 0, y = 0.5, label = "Signature:"),  # Use wrapped sentence
+            family = "my_handwriting", size = 30, hjust = 3, vjust = 7)+
+  geom_text(aes(x = 0, y = 0.5, label = "Date:  02/16/2025"),  # Use wrapped sentence
+            family = "my_handwriting", size = 30, hjust = 1.8, vjust = 9)+
+  theme_void() +
+  theme(plot.margin = margin(1, 1, 1, 1, "cm"))
+```
+
+\newpage
+
+\tableofcontents
+
+\newpage
+
+# Question 1
+
+#### Data
+
+```{r}
+deposit <- read.csv('deposit-1.csv')
+kable(head(deposit, 5), format = 'latex', 
+      booktabs = TRUE,
+      caption = 'Deposit Data Snippet') %>%
+  kable_styling(latex_options = c("scale_down", "hold_position"))
+print(dim(deposit))
+
+deposit <- deposit[complete.cases(deposit), ]
+```
+
+### a. Create an empirical logit plot with the response variable (y) subscribed by the predictor variable (x) age. You may want to convert subscribed to a numeric variable first.
+
+```{r}
+kable(table(deposit$subscribed), format = 'latex')
+deposit$subscribed_numeric <- ifelse(deposit$subscribed == "yes", 1, 0)
+
+# Calculating empirical logits by age
+emp_logits <- deposit %>%
+  group_by(age) %>%
+  summarize(
+    n = n(),
+    successes = sum(subscribed_numeric),
+    p = successes / n,
+    emp_logit = log((p + 1/(2*n)) / (1 - p + 1/(2*n)))
+  )
+
+# Creating the empirical logit plot
+ggplot(emp_logits, aes(x = age, y = emp_logit)) +
+  geom_point() +
+  geom_smooth(method = "loess", se = TRUE) +
+  labs(
+    title = "Empirical Logit Plot",
+    x = "Age",
+    y = "Empirical Logit"
+  ) +
+  theme_minimal()
+```
+
+### b. Report the proportion (tabular format is fine) subscribed=”yes” for each of the categories for job, marital, education, default, housing, loan, and contact.
+
+```{r}
+calculate_proportions <- function(data, var_name) {
+  props <- data %>%
+    group_by(!!sym(var_name)) %>%
+    summarize(
+      total = n(),
+      subscribed_yes = sum(subscribed == "yes"),
+      proportion = round(subscribed_yes / total, 4)
+    ) %>%
+    arrange(desc(proportion)) %>%
+    mutate(variable = var_name)
+
+  return(props)
+}
+
+cat_vars <- c("job", "marital", "education", "default", "housing", "loan", "contact")
+
+proportion_tables <- lapply(cat_vars, function(var) {
+  calculate_proportions(deposit, var)
+})
+
+for(i in seq_along(cat_vars)) {
+  cat("\n### Proportions for", cat_vars[i], "\n")
+  print(
+    kable(
+      proportion_tables[[i]],
+      col.names = c("Category", "Total", "Subscribed Yes", "Proportion", "Variable"),
+      caption = paste("Subscription proportions by", cat_vars[i]),
+      digits = 4
+    )
+  )
+  cat("\n")
+}
+```
+
+### c. Plot the response variable, proportion subscribed=”yes”, for each of the following values of campaign: 1, 2, 3, 4, 5, 6+
+
+```{r}
+campaign_summary <- deposit %>%  
+  mutate(campaign_group = if_else(campaign >= 6, "6+", as.character(campaign))) %>%  
+  group_by(campaign_group) %>%  
+  summarise(
+    total = n(),
+    subscribed_yes = sum(subscribed == "yes"),
+    proportion_yes = subscribed_yes / total,
+    .groups = "drop"
+  )
+
+ggplot(campaign_summary, aes(x = campaign_group, y = proportion_yes)) +
+  geom_bar(stat = "identity", fill = "black") +
+  labs(title = "Proportion of Subscribed = 'Yes' by Campaign Group",
+       x = "Number of Contacts in Campaign",
+       y = "Proportion Subscribed ('Yes')") +
+  theme_classic()
+
+```
+
+1.  The proportion of clients subscribing declines as the number of campaign contacts increases. Specifically:
+
+    -   The highest subscription rate occurs with just one contact.\
+    -   As the number of contacts rises, the subscription rate steadily decreases, reaching its lowest point for six or more contacts.
+
+2.  The diminishing returns from additional contacts suggest that after a certain threshold, making more calls is unlikely to improve conversions and may even have a negative effect.
+
+3.  A more effective approach could be to focus on fewer, well-targeted contacts to maximize subscriptions while keeping costs low.
+
+### d. Next, we want to evaluate if campaign contacts are effective. Estimate a logistic regression model using the variable campaign as a predictor of subscribed=yes. Are more campaign contacts effective at producing subscriptions to term deposits?
+
+```{r}
+model2 <- deposit %>% glm(subscribed_numeric~campaign,
+                          family = binomial, data = .)
+summary(model2)
+print(exp(coef(model2)))
+
+```
+
+From your logistic regression model:
+
+-   **Intercept**: The estimate for the intercept is `-1.718972`, which represents the log-odds of subscribing when `campaign = 0`. Since this is negative, it suggests that without any contacts, the odds of subscription are quite low.
+
+-   **Campaign Coefficient**: The estimate for `campaign` is `-0.122504`. This is the change in the log-odds of subscribing for each additional contact. A **negative coefficient** means that as the number of campaign contacts increases, the **likelihood of subscribing decreases**.
+
+##### Statistical Significance
+
+The p-value for the `campaign` variable is **\< 2e-16**, which is highly significant. This indicates that `campaign` is a statistically significant predictor of subscription (`subscribed = "yes"`), i.e., the relationship between campaign contacts and subscription is unlikely to be due to random chance.
+
+For the `campaign` coefficient:
+
+-   The **odds ratio** is `exp(-0.122504) ≈ 0.884` which suggests that for each additional contact, the odds of a person subscribing decrease by about **11.6%** (since the odds ratio is less than 1).
+
+##### Conclusion
+
+-   Based on the logistic regression model, **more campaign contacts are associated with a decrease in the likelihood of subscription**. The negative coefficient and odds ratio below 1 indicate that as the number of contacts increases, the probability of subscribing to the term deposit **decreases**.
+
+-   Despite this, since the relationship is statistically significant, it suggests that campaign contacts are an important factor in the model, even though more contacts might not be effective at increasing subscriptions.
+
+### e. What is the probability of a person with zero contacts (i.e. campaign=0) subscribing to a term deposit? What is the probability of a person with one contacts (i.e. campaign=1) subscribing to a term deposit? What is the probability of a person with two contacts (i.e. campaign=2) subscribing to a term deposit?
+
+```{r}
+# Coefficients from the model
+intercept <- -1.718972
+campaign_coef <- -0.122504
+
+# Function to calculate probability based on campaign value
+calculate_prob <- function(campaign) {
+  log_odds <- -(intercept + campaign_coef * campaign)
+  prob <- 1 / (1 + exp(log_odds))
+  return(prob)
+}
+
+# Probabilities for campaign = 0, 1, and 2
+prob_0 <- calculate_prob(0)
+prob_1 <- calculate_prob(1)
+prob_2 <- calculate_prob(2)
+
+cat('P(Campaign = 0):\t', prob_0,
+    '\nP(Campaign = 1):\t', prob_1,
+    '\nP(Campaign = 2):\t', prob_2)
+```
+
+#### Calculation 
+
+$$
+\begin{aligned}
+&\text{P(Campaign = 0)} = \frac{1}{1+e^{-(-1.719+0.123\times campaign)}} = \frac{1}{1+e^{-(-1.719+0.123\times 0)}} = 0.152\\
+&\text{P(Campaign = 1)} = \frac{1}{1+e^{-(-1.719+0.123\times campaign)}} = \frac{1}{1+e^{-(-1.719+0.123\times 1)}} = 0.137\\
+&\text{P(Campaign = 2)} = \frac{1}{1+e^{-(-1.719+0.123\times campaign)}} = \frac{1}{1+e^{-(-1.719+0.123\times 2)}} = 0.123\\
+\end{aligned}
+$$
+
+Using the logistic regression model, I estimated the probabilities of a person subscribing to a term deposit based on the number of campaign contacts.
+
+-   With zero contacts, the probability of subscribing is about **15.2%**.\
+-   If contacted once, the probability drops to approximately **13.7%**.\
+-   With two contacts, it decreases further to around **12.3%**.
+
+These findings reinforce the earlier observation that increasing the number of contacts tends to lower the likelihood of subscription. This suggests that the **first contact has the greatest impact**, while additional calls may not only be ineffective but could even discourage potential subscribers. This insight highlights the importance of **optimizing the initial contact** rather than relying on multiple follow-ups to drive conversions.
+
+### f. Estimate a logistic regression model using the variable campaign as a predictor along with the following other variables: job, marital, education, default, housing, loan, contact, age, and campaign. Consider the form in which age should enter the model (i.e. categorical, continuous, transformed) and choose the best option for this model. Are more campaign contacts effective at producing subscriptions to term deposits conditional on the additional predictors?
+
+```{r warning =FALSE, message=FALSE}
+ggplot(deposit, aes(x = age)) +
+  geom_histogram(bins = 30, fill = "steelblue", color = "black", alpha = 0.7) +
+  labs(title = "Distribution of Age", x = "Age", y = "Frequency") +
+  theme_minimal()
+deposit <- deposit %>%
+  mutate(
+    job = as.factor(job),
+    marital = as.factor(marital),
+    education = as.factor(education),
+    default = as.factor(default),
+    housing = as.factor(housing),
+    loan = as.factor(loan),
+    contact = as.factor(contact)
+  )
+
+model_full <- glm(subscribed_numeric ~ campaign + job + marital + education + default + housing + loan + contact + age, 
+                  data = deposit, 
+                  family = binomial)
+
+summary(model_full)
+library(car)
+vif(model_full)
+```
+
+We are considering age to be continuous from the histogram
+
+##### **Model Coefficients Interpretation:**
+
+-   **Campaign** (`campaign`):
+
+    -   The coefficient for `campaign` is **-0.122479** with a very significant p-value (\< 2e-16). This suggests that for each additional campaign contact, the log-odds of subscribing decrease by 0.1225, holding other factors constant.
+
+    -   This indicates a **negative** relationship between the number of contacts and the probability of subscribing.
+
+-   **Job**:
+
+    -   Some job categories, such as `jobblue-collar`, `jobentrepreneur`, and `jobmanagement`, have **negative coefficients**, indicating that individuals in these jobs are less likely to subscribe compared to the reference category.
+
+    -   Conversely, `jobretired`, `jobstudent`, and `jobtechnician` have **positive coefficients**, meaning these job types are more likely to subscribe to a term deposit.
+
+-   **Marital**:
+
+    -   `maritalmarried` has a negative coefficient, meaning married individuals are less likely to subscribe, while `maritalsingle` has a positive coefficient, indicating single individuals are more likely to subscribe.
+
+-   **Education**:
+
+    -   `educationtertiary` has a positive coefficient, suggesting individuals with tertiary education are more likely to subscribe compared to those with other education levels.
+
+    -   `educationsecondary` does not show a statistically significant effect.
+
+-   **Default**:
+
+    -   `defaultyes` has a **negative coefficient**, suggesting that individuals with a history of default are less likely to subscribe. However, it is only marginally significant (p-value = 0.0587).
+
+-   **Housing** and **Loan**:
+
+    -   Both `housingyes` and `loanyes` have **negative coefficients**, indicating that individuals who already have a housing loan or other loan are less likely to subscribe.
+
+-   **Contact**:
+
+    -   `contacttelephone` and `contactunknown` show a negative relationship with subscription likelihood, especially `contactunknown` with a large negative coefficient, suggesting that individuals who were contacted via unknown channels have much lower subscription probabilities.
+
+-   **Age**:
+
+    -   `age` has a positive coefficient (**0.005484**) and is statistically significant (p-value = 0.0126). This means that older individuals are slightly more likely to subscribe, holding other factors constant.
+
+##### **Model Performance**:
+
+-   **Null deviance**: 22,893 (this is the deviance of the null model, i.e., a model with no predictors).
+
+-   **Residual deviance**: 20,881 (after including all predictors).
+
+-   The reduction in deviance suggests the model explains the data better than a null model.
+
+-   **AIC**: 20,929 (lower AIC values indicate a better model fit).
+
+##### **Multicollinearity Check**:
+
+-   **GVIF** values are provided for each predictor. A GVIF (Generalized Variance Inflation Factor) greater than 1 suggests possible multicollinearity.
+
+    -   For example, `job` has a GVIF of 3.79, which indicates that multicollinearity might be a concern for this variable, as it has multiple categories.
+
+##### **Conclusion**:
+
+-   **Effectiveness of Campaign**: The coefficient for `campaign` is **negative and significant**, meaning that increasing the number of campaign contacts is associated with a **decrease** in the probability of subscribing to a term deposit when controlling for other variables. This suggests that more contacts might not be effective in generating subscriptions, and there could be diminishing returns after a certain number of contacts.
+
+### g. For the model estimated in 1f, what is an interpretation of the coefficient for campaign?
+
+##### **Log-Odds Interpretation**:
+
+In a logistic regression model, the coefficients represent the change in the **log-odds** of the outcome (in this case, the probability of subscribing to a term deposit) for a one-unit change in the predictor variable, holding all other variables constant.
+
+For the `campaign` variable, the coefficient is negative (-0.122479), which means that for each additional contact (i.e., as the number of campaign contacts increases by 1), the **log-odds of subscribing to a term deposit decrease** by **0.1225**, holding all other variables in the model constant.
+
+#### **Odds Ratio Interpretation**:
+
+To better understand this coefficient in terms of probabilities, we can compute the **odds ratio**, which is the exponentiation of the coefficient:
+
+$$
+\text{Odds Ratio} = e^{-0.122479} \approx 0.885
+$$
+
+This means that for each additional contact in the campaign, the **odds of subscribing to a term deposit decrease by approximately 12%**, holding all other factors constant.
+
+##### **Practical Interpretation**:
+
+-   If a person receives 1 more contact from the campaign, the odds of them subscribing to a term deposit are approximately **12% lower** compared to a person with one less contact, assuming other variables (like job, marital status, age, etc.) are held constant.
+
+-   Since the coefficient for `campaign` is negative, it suggests that **more campaign contacts** might actually **decrease** the likelihood of subscription, possibly because the additional contacts could be perceived as excessive or annoying by some individuals.
+
+##### **Summary**:
+
+-   **Effect of campaign**: The more campaign contacts a person receives, the less likely they are to subscribe to a term deposit, after adjusting for other factors such as job, marital status, education, and so on.
+
+-   **Magnitude of effect**: The odds decrease by about 12% for each additional campaign contact.
+
+### h. Use the likelihood ratio test discussed in class to evaluate whether the model in 1f is a better fit than the model in 1d.
+
+```{r}
+model_d <- glm(subscribed_numeric ~ campaign, data = deposit, family = binomial)
+
+model_f <- glm(subscribed_numeric ~ campaign + job + marital + education + default + housing + loan + contact + age, 
+               data = deposit, 
+               family = binomial)
+lrt <- anova(model_d, model_f, test = "LRT")
+print(lrt)
+```
+
+#### Key Components:
+
+1.  **Residual Degrees of Freedom (`Resid. Df`)**
+
+    -   Model 1: 31,645
+
+    -   Model 2: 31,623
+
+    -   **Difference (Df)** = 22 (indicating that Model 2 has 22 additional parameters)
+
+2.  **Residual Deviance (`Resid. Dev`)**
+
+    -   Model 1: 22,668
+
+    -   Model 2: 20,881
+
+    -   **Deviance Reduction (`Deviance`)** = 1,786.7
+
+3.  **Chi-Square Test (`Pr(>Chi)`)**
+
+    -   The p-value is **\< 2.2e-16**, which is extremely small.
+
+    -   This suggests that the additional variables in Model 2 **significantly improve the fit** of the model compared to Model 1.
+
+------------------------------------------------------------------------
+
+##### Conclusion:
+
+Since the p-value is **very small (\< 0.001)**, we **reject the null hypothesis** that the simpler model (Model 1) is as good as the more complex model (Model 2). This means that adding `job`, `marital`, `education`, `default`, `housing`, `loan`, `contact`, and `age` significantly improves the model's ability to predict whether a person subscribes to a term deposit. Hence **Model 2** is better

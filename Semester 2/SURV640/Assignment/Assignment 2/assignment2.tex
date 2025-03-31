@@ -1,0 +1,1025 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Assignment 2},
+  pdfauthor={Sagnik Chakravarty},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Assignment 2}
+\author{Sagnik Chakravarty}
+\date{}
+
+\begin{document}
+\maketitle
+
+\hypertarget{setup}{%
+\subsection{Setup}\label{setup}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(glmnet)}
+\FunctionTok{library}\NormalTok{(caret)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{data}{%
+\subsection{Data}\label{data}}
+
+For this exercise we use the Communities and Crime data from the UCI ML
+repository, which includes information about communities in the US.
+``The data combines socio-economic data from the 1990 US Census, law
+enforcement data from the 1990 US LEMAS survey, and crime data from the
+1995 FBI UCR''
+
+Source:
+\url{https://archive.ics.uci.edu/ml/datasets/Communities+and+Crime}
+
+First, some data prep.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{crime }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(}\StringTok{"communities.data"}\NormalTok{, }\AttributeTok{header =} \ConstantTok{FALSE}\NormalTok{, }\AttributeTok{na.strings =} \StringTok{"?"}\NormalTok{)}
+\NormalTok{varnames }\OtherTok{\textless{}{-}} \FunctionTok{read.delim}\NormalTok{(}\StringTok{"communities.txt"}\NormalTok{, }\AttributeTok{header =} \ConstantTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Clean name vector and use as variable names.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{varnames }\OtherTok{\textless{}{-}} \FunctionTok{as.character}\NormalTok{(varnames}\SpecialCharTok{$}\NormalTok{V1)}
+\NormalTok{varnames }\OtherTok{\textless{}{-}} \FunctionTok{gsub}\NormalTok{(}\StringTok{"@attribute "}\NormalTok{, }\StringTok{""}\NormalTok{, varnames)}
+\NormalTok{varnames }\OtherTok{\textless{}{-}} \FunctionTok{gsub}\NormalTok{(}\StringTok{" numeric"}\NormalTok{, }\StringTok{""}\NormalTok{, varnames)}
+\NormalTok{varnames }\OtherTok{\textless{}{-}} \FunctionTok{gsub}\NormalTok{(}\StringTok{" string"}\NormalTok{, }\StringTok{""}\NormalTok{, varnames)}
+\FunctionTok{names}\NormalTok{(crime) }\OtherTok{\textless{}{-}}\NormalTok{ varnames}
+\end{Highlighting}
+\end{Shaded}
+
+To make things easier, drop columns with missing values.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{crime }\OtherTok{\textless{}{-}}\NormalTok{ crime[, }\FunctionTok{colSums}\NormalTok{(}\FunctionTok{is.na}\NormalTok{(crime)) }\SpecialCharTok{==} \DecValTok{0}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+Check whats left.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str}\NormalTok{(crime)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 'data.frame':    1994 obs. of  103 variables:
+##  $ state                : int  8 53 24 34 42 6 44 6 21 29 ...
+##  $ communityname        : chr  "Lakewoodcity" "Tukwilacity" "Aberdeentown" "Willingborotownship" ...
+##  $ fold                 : int  1 1 1 1 1 1 1 1 1 1 ...
+##  $ population           : num  0.19 0 0 0.04 0.01 0.02 0.01 0.01 0.03 0.01 ...
+##  $ householdsize        : num  0.33 0.16 0.42 0.77 0.55 0.28 0.39 0.74 0.34 0.4 ...
+##  $ racepctblack         : num  0.02 0.12 0.49 1 0.02 0.06 0 0.03 0.2 0.06 ...
+##  $ racePctWhite         : num  0.9 0.74 0.56 0.08 0.95 0.54 0.98 0.46 0.84 0.87 ...
+##  $ racePctAsian         : num  0.12 0.45 0.17 0.12 0.09 1 0.06 0.2 0.02 0.3 ...
+##  $ racePctHisp          : num  0.17 0.07 0.04 0.1 0.05 0.25 0.02 1 0 0.03 ...
+##  $ agePct12t21          : num  0.34 0.26 0.39 0.51 0.38 0.31 0.3 0.52 0.38 0.9 ...
+##  $ agePct12t29          : num  0.47 0.59 0.47 0.5 0.38 0.48 0.37 0.55 0.45 0.82 ...
+##  $ agePct16t24          : num  0.29 0.35 0.28 0.34 0.23 0.27 0.23 0.36 0.28 0.8 ...
+##  $ agePct65up           : num  0.32 0.27 0.32 0.21 0.36 0.37 0.6 0.35 0.48 0.39 ...
+##  $ numbUrban            : num  0.2 0.02 0 0.06 0.02 0.04 0.02 0 0.04 0.02 ...
+##  $ pctUrban             : num  1 1 0 1 0.9 1 0.81 0 1 1 ...
+##  $ medIncome            : num  0.37 0.31 0.3 0.58 0.5 0.52 0.42 0.16 0.17 0.54 ...
+##  $ pctWWage             : num  0.72 0.72 0.58 0.89 0.72 0.68 0.5 0.44 0.47 0.59 ...
+##  $ pctWFarmSelf         : num  0.34 0.11 0.19 0.21 0.16 0.2 0.23 1 0.36 0.22 ...
+##  $ pctWInvInc           : num  0.6 0.45 0.39 0.43 0.68 0.61 0.68 0.23 0.34 0.86 ...
+##  $ pctWSocSec           : num  0.29 0.25 0.38 0.36 0.44 0.28 0.61 0.53 0.55 0.42 ...
+##  $ pctWPubAsst          : num  0.15 0.29 0.4 0.2 0.11 0.15 0.21 0.97 0.48 0.02 ...
+##  $ pctWRetire           : num  0.43 0.39 0.84 0.82 0.71 0.25 0.54 0.41 0.43 0.31 ...
+##  $ medFamInc            : num  0.39 0.29 0.28 0.51 0.46 0.62 0.43 0.15 0.21 0.85 ...
+##  $ perCapInc            : num  0.4 0.37 0.27 0.36 0.43 0.72 0.47 0.1 0.23 0.89 ...
+##  $ whitePerCap          : num  0.39 0.38 0.29 0.4 0.41 0.76 0.44 0.12 0.23 0.94 ...
+##  $ blackPerCap          : num  0.32 0.33 0.27 0.39 0.28 0.77 0.4 0.08 0.19 0.11 ...
+##  $ indianPerCap         : num  0.27 0.16 0.07 0.16 0 0.28 0.24 0.17 0.1 0.09 ...
+##  $ AsianPerCap          : num  0.27 0.3 0.29 0.25 0.74 0.52 0.86 0.27 0.26 0.33 ...
+##  $ HispPerCap           : num  0.41 0.35 0.39 0.44 0.48 0.6 0.36 0.21 0.22 0.8 ...
+##  $ NumUnderPov          : num  0.08 0.01 0.01 0.01 0 0.01 0.01 0.03 0.04 0 ...
+##  $ PctPopUnderPov       : num  0.19 0.24 0.27 0.1 0.06 0.12 0.11 0.64 0.45 0.11 ...
+##  $ PctLess9thGrade      : num  0.1 0.14 0.27 0.09 0.25 0.13 0.29 0.96 0.52 0.04 ...
+##  $ PctNotHSGrad         : num  0.18 0.24 0.43 0.25 0.3 0.12 0.41 0.82 0.59 0.03 ...
+##  $ PctBSorMore          : num  0.48 0.3 0.19 0.31 0.33 0.8 0.36 0.12 0.17 1 ...
+##  $ PctUnemployed        : num  0.27 0.27 0.36 0.33 0.12 0.1 0.28 1 0.55 0.11 ...
+##  $ PctEmploy            : num  0.68 0.73 0.58 0.71 0.65 0.65 0.54 0.26 0.43 0.44 ...
+##  $ PctEmplManu          : num  0.23 0.57 0.32 0.36 0.67 0.19 0.44 0.43 0.59 0.2 ...
+##  $ PctEmplProfServ      : num  0.41 0.15 0.29 0.45 0.38 0.77 0.53 0.34 0.36 1 ...
+##  $ PctOccupManu         : num  0.25 0.42 0.49 0.37 0.42 0.06 0.33 0.71 0.64 0.02 ...
+##  $ PctOccupMgmtProf     : num  0.52 0.36 0.32 0.39 0.46 0.91 0.49 0.18 0.29 0.96 ...
+##  $ MalePctDivorce       : num  0.68 1 0.63 0.34 0.22 0.49 0.25 0.38 0.62 0.3 ...
+##  $ MalePctNevMarr       : num  0.4 0.63 0.41 0.45 0.27 0.57 0.34 0.47 0.26 0.85 ...
+##  $ FemalePctDiv         : num  0.75 0.91 0.71 0.49 0.2 0.61 0.28 0.59 0.66 0.39 ...
+##  $ TotalPctDiv          : num  0.75 1 0.7 0.44 0.21 0.58 0.28 0.52 0.67 0.36 ...
+##  $ PersPerFam           : num  0.35 0.29 0.45 0.75 0.51 0.44 0.42 0.78 0.37 0.31 ...
+##  $ PctFam2Par           : num  0.55 0.43 0.42 0.65 0.91 0.62 0.77 0.45 0.51 0.65 ...
+##  $ PctKids2Par          : num  0.59 0.47 0.44 0.54 0.91 0.69 0.81 0.43 0.55 0.73 ...
+##  $ PctYoungKids2Par     : num  0.61 0.6 0.43 0.83 0.89 0.87 0.79 0.34 0.58 0.78 ...
+##  $ PctTeen2Par          : num  0.56 0.39 0.43 0.65 0.85 0.53 0.74 0.34 0.47 0.67 ...
+##  $ PctWorkMomYoungKids  : num  0.74 0.46 0.71 0.85 0.4 0.3 0.57 0.29 0.65 0.72 ...
+##  $ PctWorkMom           : num  0.76 0.53 0.67 0.86 0.6 0.43 0.62 0.27 0.64 0.71 ...
+##  $ NumIlleg             : num  0.04 0 0.01 0.03 0 0 0 0.02 0.02 0 ...
+##  $ PctIlleg             : num  0.14 0.24 0.46 0.33 0.06 0.11 0.13 0.5 0.29 0.07 ...
+##  $ NumImmig             : num  0.03 0.01 0 0.02 0 0.04 0.01 0.02 0 0.01 ...
+##  $ PctImmigRecent       : num  0.24 0.52 0.07 0.11 0.03 0.3 0 0.5 0.12 0.41 ...
+##  $ PctImmigRec5         : num  0.27 0.62 0.06 0.2 0.07 0.35 0.02 0.59 0.09 0.44 ...
+##  $ PctImmigRec8         : num  0.37 0.64 0.15 0.3 0.2 0.43 0.02 0.65 0.07 0.52 ...
+##  $ PctImmigRec10        : num  0.39 0.63 0.19 0.31 0.27 0.47 0.1 0.59 0.13 0.48 ...
+##  $ PctRecentImmig       : num  0.07 0.25 0.02 0.05 0.01 0.5 0 0.69 0 0.22 ...
+##  $ PctRecImmig5         : num  0.07 0.27 0.02 0.08 0.02 0.5 0.01 0.72 0 0.21 ...
+##  $ PctRecImmig8         : num  0.08 0.25 0.04 0.11 0.04 0.56 0.01 0.71 0 0.22 ...
+##  $ PctRecImmig10        : num  0.08 0.23 0.05 0.11 0.05 0.57 0.03 0.6 0 0.19 ...
+##  $ PctSpeakEnglOnly     : num  0.89 0.84 0.88 0.81 0.88 0.45 0.73 0.12 0.99 0.85 ...
+##  $ PctNotSpeakEnglWell  : num  0.06 0.1 0.04 0.08 0.05 0.28 0.05 0.93 0.01 0.03 ...
+##  $ PctLargHouseFam      : num  0.14 0.16 0.2 0.56 0.16 0.25 0.12 0.74 0.12 0.09 ...
+##  $ PctLargHouseOccup    : num  0.13 0.1 0.2 0.62 0.19 0.19 0.13 0.75 0.12 0.06 ...
+##  $ PersPerOccupHous     : num  0.33 0.17 0.46 0.85 0.59 0.29 0.42 0.8 0.35 0.15 ...
+##  $ PersPerOwnOccHous    : num  0.39 0.29 0.52 0.77 0.6 0.53 0.54 0.68 0.38 0.34 ...
+##  $ PersPerRentOccHous   : num  0.28 0.17 0.43 1 0.37 0.18 0.24 0.92 0.33 0.05 ...
+##  $ PctPersOwnOccup      : num  0.55 0.26 0.42 0.94 0.89 0.39 0.65 0.39 0.5 0.48 ...
+##  $ PctPersDenseHous     : num  0.09 0.2 0.15 0.12 0.02 0.26 0.03 0.89 0.1 0.03 ...
+##  $ PctHousLess3BR       : num  0.51 0.82 0.51 0.01 0.19 0.73 0.46 0.66 0.64 0.58 ...
+##  $ MedNumBR             : num  0.5 0 0.5 0.5 0.5 0 0.5 0 0 0 ...
+##  $ HousVacant           : num  0.21 0.02 0.01 0.01 0.01 0.02 0.01 0.01 0.04 0.02 ...
+##  $ PctHousOccup         : num  0.71 0.79 0.86 0.97 0.89 0.84 0.89 0.91 0.72 0.72 ...
+##  $ PctHousOwnOcc        : num  0.52 0.24 0.41 0.96 0.87 0.3 0.57 0.46 0.49 0.38 ...
+##  $ PctVacantBoarded     : num  0.05 0.02 0.29 0.6 0.04 0.16 0.09 0.22 0.05 0.07 ...
+##  $ PctVacMore6Mos       : num  0.26 0.25 0.3 0.47 0.55 0.28 0.49 0.37 0.49 0.47 ...
+##  $ MedYrHousBuilt       : num  0.65 0.65 0.52 0.52 0.73 0.25 0.38 0.6 0.5 0.04 ...
+##  $ PctHousNoPhone       : num  0.14 0.16 0.47 0.11 0.05 0.02 0.05 0.28 0.57 0.01 ...
+##  $ PctWOFullPlumb       : num  0.06 0 0.45 0.11 0.14 0.05 0.05 0.23 0.22 0 ...
+##  $ OwnOccLowQuart       : num  0.22 0.21 0.18 0.24 0.31 0.94 0.37 0.15 0.07 0.63 ...
+##  $ OwnOccMedVal         : num  0.19 0.2 0.17 0.21 0.31 1 0.38 0.13 0.07 0.71 ...
+##  $ OwnOccHiQuart        : num  0.18 0.21 0.16 0.19 0.3 1 0.39 0.13 0.08 0.79 ...
+##  $ RentLowQ             : num  0.36 0.42 0.27 0.75 0.4 0.67 0.26 0.21 0.14 0.44 ...
+##  $ RentMedian           : num  0.35 0.38 0.29 0.7 0.36 0.63 0.35 0.24 0.17 0.42 ...
+##  $ RentHighQ            : num  0.38 0.4 0.27 0.77 0.38 0.68 0.42 0.25 0.16 0.47 ...
+##  $ MedRent              : num  0.34 0.37 0.31 0.89 0.38 0.62 0.35 0.24 0.15 0.41 ...
+##  $ MedRentPctHousInc    : num  0.38 0.29 0.48 0.63 0.22 0.47 0.46 0.64 0.38 0.23 ...
+##  $ MedOwnCostPctInc     : num  0.46 0.32 0.39 0.51 0.51 0.59 0.44 0.59 0.13 0.27 ...
+##  $ MedOwnCostPctIncNoMtg: num  0.25 0.18 0.28 0.47 0.21 0.11 0.31 0.28 0.36 0.28 ...
+##  $ NumInShelters        : num  0.04 0 0 0 0 0 0 0 0.01 0 ...
+##  $ NumStreet            : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ PctForeignBorn       : num  0.12 0.21 0.14 0.19 0.11 0.7 0.15 0.59 0.01 0.22 ...
+##  $ PctBornSameState     : num  0.42 0.5 0.49 0.3 0.72 0.42 0.81 0.58 0.78 0.42 ...
+##  $ PctSameHouse85       : num  0.5 0.34 0.54 0.73 0.64 0.49 0.77 0.52 0.48 0.34 ...
+##  $ PctSameCity85        : num  0.51 0.6 0.67 0.64 0.61 0.73 0.91 0.79 0.79 0.23 ...
+##  $ PctSameState85       : num  0.64 0.52 0.56 0.65 0.53 0.64 0.84 0.78 0.75 0.09 ...
+##  $ LandArea             : num  0.12 0.02 0.01 0.02 0.04 0.01 0.05 0.01 0.04 0 ...
+##   [list output truncated]
+\end{verbatim}
+
+\hypertarget{train-and-test-set}{%
+\subsection{Train and test set}\label{train-and-test-set}}
+
+Next, we want to split the data into a training (75\%) and a test (25\%)
+part. This can be done by random sampling with \texttt{sample}. Note
+that there is a \texttt{fold} variable in the data set, but here we want
+to follow our own train/test procedure.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{set.seed}\NormalTok{(}\DecValTok{3940}\NormalTok{)}
+
+\NormalTok{train\_indices }\OtherTok{\textless{}{-}} \FunctionTok{sample}\NormalTok{(}\DecValTok{1}\SpecialCharTok{:}\FunctionTok{nrow}\NormalTok{(crime),}
+                        \AttributeTok{size =} \FunctionTok{round}\NormalTok{(}\FunctionTok{nrow}\NormalTok{(crime)}\SpecialCharTok{*}\FloatTok{0.75}\NormalTok{))}
+\NormalTok{crime\_train }\OtherTok{\textless{}{-}}\NormalTok{ crime[train\_indices,]}
+\NormalTok{crime\_test }\OtherTok{\textless{}{-}}\NormalTok{ crime[}\SpecialCharTok{{-}}\NormalTok{train\_indices,]}
+\end{Highlighting}
+\end{Shaded}
+
+Now, prepare the training data for running regularized regression models
+via \texttt{glmnet}. Our prediction outcome is
+\texttt{ViolentCrimesPerPop}. As X, use all variables except
+\texttt{state}, \texttt{communityname}, and \texttt{fold}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{X }\OtherTok{\textless{}{-}} \FunctionTok{model.matrix}\NormalTok{(ViolentCrimesPerPop}\SpecialCharTok{\textasciitilde{}}\NormalTok{.}\SpecialCharTok{{-}}\NormalTok{state}\SpecialCharTok{{-}}\NormalTok{communityname}\SpecialCharTok{{-}}\NormalTok{fold, }
+                  \AttributeTok{data =}\NormalTok{ crime\_train)[,}\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{]}
+
+\NormalTok{y }\OtherTok{\textless{}{-}}\NormalTok{ crime\_train}\SpecialCharTok{$}\NormalTok{ViolentCrimesPerPop}
+\end{Highlighting}
+\end{Shaded}
+
+Check whether X looks ok.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{dim}\NormalTok{(X)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 1496   99
+\end{verbatim}
+
+\hypertarget{lasso}{%
+\subsubsection{Lasso}\label{lasso}}
+
+Estimate a sequence of Lasso models using \texttt{glmnet}. You can stick
+with the defaults for choosing a range of lambdas.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{lasso\_model }\OtherTok{\textless{}{-}} \FunctionTok{glmnet}\NormalTok{(X, y, }\AttributeTok{alpha =} \DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Here we want to display lambda and the coefficients of the first Lasso
+model.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{lasso\_model}\SpecialCharTok{$}\NormalTok{lambda[}\DecValTok{1}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.1736515
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{lasso\_model}\SpecialCharTok{$}\NormalTok{beta[}\DecValTok{1}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0
+\end{verbatim}
+
+Same for the last Lasso model.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{lasso\_model}\SpecialCharTok{$}\NormalTok{lambda[}\DecValTok{1}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.1736515
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{lasso\_model}\SpecialCharTok{$}\NormalTok{lambda[(}\FunctionTok{ncol}\NormalTok{(lasso\_model}\SpecialCharTok{$}\NormalTok{beta)}\SpecialCharTok{/}\DecValTok{2}\NormalTok{)]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.0018192
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{lasso\_model}\SpecialCharTok{$}\NormalTok{lambda[}\FunctionTok{ncol}\NormalTok{(lasso\_model}\SpecialCharTok{$}\NormalTok{beta)]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 1.736515e-05
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{lasso\_model}\SpecialCharTok{$}\NormalTok{beta[,}\DecValTok{1}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##            population         householdsize          racepctblack 
+##                     0                     0                     0 
+##          racePctWhite          racePctAsian           racePctHisp 
+##                     0                     0                     0 
+##           agePct12t21           agePct12t29           agePct16t24 
+##                     0                     0                     0 
+##            agePct65up             numbUrban              pctUrban 
+##                     0                     0                     0 
+##             medIncome              pctWWage          pctWFarmSelf 
+##                     0                     0                     0 
+##            pctWInvInc            pctWSocSec           pctWPubAsst 
+##                     0                     0                     0 
+##            pctWRetire             medFamInc             perCapInc 
+##                     0                     0                     0 
+##           whitePerCap           blackPerCap          indianPerCap 
+##                     0                     0                     0 
+##           AsianPerCap            HispPerCap           NumUnderPov 
+##                     0                     0                     0 
+##        PctPopUnderPov       PctLess9thGrade          PctNotHSGrad 
+##                     0                     0                     0 
+##           PctBSorMore         PctUnemployed             PctEmploy 
+##                     0                     0                     0 
+##           PctEmplManu       PctEmplProfServ          PctOccupManu 
+##                     0                     0                     0 
+##      PctOccupMgmtProf        MalePctDivorce        MalePctNevMarr 
+##                     0                     0                     0 
+##          FemalePctDiv           TotalPctDiv            PersPerFam 
+##                     0                     0                     0 
+##            PctFam2Par           PctKids2Par      PctYoungKids2Par 
+##                     0                     0                     0 
+##           PctTeen2Par   PctWorkMomYoungKids            PctWorkMom 
+##                     0                     0                     0 
+##              NumIlleg              PctIlleg              NumImmig 
+##                     0                     0                     0 
+##        PctImmigRecent          PctImmigRec5          PctImmigRec8 
+##                     0                     0                     0 
+##         PctImmigRec10        PctRecentImmig          PctRecImmig5 
+##                     0                     0                     0 
+##          PctRecImmig8         PctRecImmig10      PctSpeakEnglOnly 
+##                     0                     0                     0 
+##   PctNotSpeakEnglWell       PctLargHouseFam     PctLargHouseOccup 
+##                     0                     0                     0 
+##      PersPerOccupHous     PersPerOwnOccHous    PersPerRentOccHous 
+##                     0                     0                     0 
+##       PctPersOwnOccup      PctPersDenseHous        PctHousLess3BR 
+##                     0                     0                     0 
+##              MedNumBR            HousVacant          PctHousOccup 
+##                     0                     0                     0 
+##         PctHousOwnOcc      PctVacantBoarded        PctVacMore6Mos 
+##                     0                     0                     0 
+##        MedYrHousBuilt        PctHousNoPhone        PctWOFullPlumb 
+##                     0                     0                     0 
+##        OwnOccLowQuart          OwnOccMedVal         OwnOccHiQuart 
+##                     0                     0                     0 
+##              RentLowQ            RentMedian             RentHighQ 
+##                     0                     0                     0 
+##               MedRent     MedRentPctHousInc      MedOwnCostPctInc 
+##                     0                     0                     0 
+## MedOwnCostPctIncNoMtg         NumInShelters             NumStreet 
+##                     0                     0                     0 
+##        PctForeignBorn      PctBornSameState        PctSameHouse85 
+##                     0                     0                     0 
+##         PctSameCity85        PctSameState85              LandArea 
+##                     0                     0                     0 
+##               PopDens        PctUsePubTrans   LemasPctOfficDrugUn 
+##                     0                     0                     0
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{lasso\_model}\SpecialCharTok{$}\NormalTok{beta[,(}\FunctionTok{ncol}\NormalTok{(lasso\_model}\SpecialCharTok{$}\NormalTok{beta)}\SpecialCharTok{/}\DecValTok{2}\NormalTok{)]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##            population         householdsize          racepctblack 
+##          0.0000000000          0.0000000000          0.0998215277 
+##          racePctWhite          racePctAsian           racePctHisp 
+##         -0.0635682652          0.0000000000          0.0000000000 
+##           agePct12t21           agePct12t29           agePct16t24 
+##          0.0000000000         -0.0693960810          0.0000000000 
+##            agePct65up             numbUrban              pctUrban 
+##          0.0051129932          0.0000000000          0.0343221838 
+##             medIncome              pctWWage          pctWFarmSelf 
+##          0.0000000000         -0.0573798948          0.0000000000 
+##            pctWInvInc            pctWSocSec           pctWPubAsst 
+##         -0.0681378333          0.0000000000          0.0000000000 
+##            pctWRetire             medFamInc             perCapInc 
+##         -0.0459533211          0.0000000000          0.0000000000 
+##           whitePerCap           blackPerCap          indianPerCap 
+##          0.0000000000          0.0000000000         -0.0134962672 
+##           AsianPerCap            HispPerCap           NumUnderPov 
+##          0.0013160389          0.0380405522          0.0000000000 
+##        PctPopUnderPov       PctLess9thGrade          PctNotHSGrad 
+##         -0.0369066546          0.0000000000          0.0000000000 
+##           PctBSorMore         PctUnemployed             PctEmploy 
+##          0.0000000000          0.0000000000          0.0000000000 
+##           PctEmplManu       PctEmplProfServ          PctOccupManu 
+##         -0.0001087687          0.0000000000          0.0000000000 
+##      PctOccupMgmtProf        MalePctDivorce        MalePctNevMarr 
+##          0.0000000000          0.0620718768          0.0000000000 
+##          FemalePctDiv           TotalPctDiv            PersPerFam 
+##          0.0000000000          0.0000000000          0.0000000000 
+##            PctFam2Par           PctKids2Par      PctYoungKids2Par 
+##          0.0000000000         -0.3059489244          0.0000000000 
+##           PctTeen2Par   PctWorkMomYoungKids            PctWorkMom 
+##          0.0000000000          0.0000000000         -0.0666471255 
+##              NumIlleg              PctIlleg              NumImmig 
+##          0.0000000000          0.2159800071         -0.0867873861 
+##        PctImmigRecent          PctImmigRec5          PctImmigRec8 
+##          0.0000000000          0.0000000000          0.0000000000 
+##         PctImmigRec10        PctRecentImmig          PctRecImmig5 
+##          0.0000000000          0.0000000000          0.0000000000 
+##          PctRecImmig8         PctRecImmig10      PctSpeakEnglOnly 
+##          0.0000000000          0.0000000000          0.0000000000 
+##   PctNotSpeakEnglWell       PctLargHouseFam     PctLargHouseOccup 
+##          0.0000000000          0.0000000000          0.0000000000 
+##      PersPerOccupHous     PersPerOwnOccHous    PersPerRentOccHous 
+##          0.0216526832          0.0000000000          0.0000000000 
+##       PctPersOwnOccup      PctPersDenseHous        PctHousLess3BR 
+##          0.0000000000          0.1268816362          0.0031117637 
+##              MedNumBR            HousVacant          PctHousOccup 
+##         -0.0112507793          0.1328509441         -0.0648283170 
+##         PctHousOwnOcc      PctVacantBoarded        PctVacMore6Mos 
+##          0.0000000000          0.0168127783         -0.0110774507 
+##        MedYrHousBuilt        PctHousNoPhone        PctWOFullPlumb 
+##          0.0000000000          0.0000000000          0.0000000000 
+##        OwnOccLowQuart          OwnOccMedVal         OwnOccHiQuart 
+##          0.0000000000          0.0000000000          0.0000000000 
+##              RentLowQ            RentMedian             RentHighQ 
+##         -0.0057585793          0.0000000000          0.0000000000 
+##               MedRent     MedRentPctHousInc      MedOwnCostPctInc 
+##          0.0353698799          0.0229756789          0.0000000000 
+## MedOwnCostPctIncNoMtg         NumInShelters             NumStreet 
+##         -0.0623183987          0.0000000000          0.1770893955 
+##        PctForeignBorn      PctBornSameState        PctSameHouse85 
+##          0.0000000000          0.0000000000          0.0000000000 
+##         PctSameCity85        PctSameState85              LandArea 
+##          0.0162174329          0.0000000000          0.0000000000 
+##               PopDens        PctUsePubTrans   LemasPctOfficDrugUn 
+##          0.0000000000         -0.0036536367          0.0267745625
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{lasso\_model}\SpecialCharTok{$}\NormalTok{beta[,}\FunctionTok{ncol}\NormalTok{(lasso\_model}\SpecialCharTok{$}\NormalTok{beta)]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##            population         householdsize          racepctblack 
+##           0.008153358          -0.064225415           0.142508632 
+##          racePctWhite          racePctAsian           racePctHisp 
+##          -0.080713821           0.006034638           0.039126885 
+##           agePct12t21           agePct12t29           agePct16t24 
+##           0.096507553          -0.212863514          -0.150000635 
+##            agePct65up             numbUrban              pctUrban 
+##           0.095320889          -0.112693217           0.047279919 
+##             medIncome              pctWWage          pctWFarmSelf 
+##          -0.227478274          -0.290691531           0.039473466 
+##            pctWInvInc            pctWSocSec           pctWPubAsst 
+##          -0.118696052          -0.015763592          -0.048212373 
+##            pctWRetire             medFamInc             perCapInc 
+##          -0.098998309           0.295206673           0.000000000 
+##           whitePerCap           blackPerCap          indianPerCap 
+##          -0.250561225          -0.008869789          -0.028492983 
+##           AsianPerCap            HispPerCap           NumUnderPov 
+##           0.010877482           0.073309223          -0.023487653 
+##        PctPopUnderPov       PctLess9thGrade          PctNotHSGrad 
+##          -0.204404105          -0.150684372           0.181018145 
+##           PctBSorMore         PctUnemployed             PctEmploy 
+##           0.080524031           0.007592703           0.258044304 
+##           PctEmplManu       PctEmplProfServ          PctOccupManu 
+##          -0.078510209          -0.021915132           0.082081908 
+##      PctOccupMgmtProf        MalePctDivorce        MalePctNevMarr 
+##           0.111037668           0.448365524           0.237628385 
+##          FemalePctDiv           TotalPctDiv            PersPerFam 
+##           0.093668711          -0.531664492          -0.089092307 
+##            PctFam2Par           PctKids2Par      PctYoungKids2Par 
+##          -0.044888755          -0.360296285           0.007813172 
+##           PctTeen2Par   PctWorkMomYoungKids            PctWorkMom 
+##          -0.007573480           0.051127050          -0.184059023 
+##              NumIlleg              PctIlleg              NumImmig 
+##          -0.056237596           0.152378053          -0.140171520 
+##        PctImmigRecent          PctImmigRec5          PctImmigRec8 
+##           0.042231085          -0.017765236          -0.022055725 
+##         PctImmigRec10        PctRecentImmig          PctRecImmig5 
+##           0.020339575          -0.073610594           0.020112846 
+##          PctRecImmig8         PctRecImmig10      PctSpeakEnglOnly 
+##           0.125202365          -0.103287005          -0.026250094 
+##   PctNotSpeakEnglWell       PctLargHouseFam     PctLargHouseOccup 
+##          -0.119588525          -0.140284116          -0.007134130 
+##      PersPerOccupHous     PersPerOwnOccHous    PersPerRentOccHous 
+##           0.727582520          -0.082744922          -0.233744064 
+##       PctPersOwnOccup      PctPersDenseHous        PctHousLess3BR 
+##          -0.594290502           0.192253874           0.092857626 
+##              MedNumBR            HousVacant          PctHousOccup 
+##           0.006291777           0.265279159          -0.044396370 
+##         PctHousOwnOcc      PctVacantBoarded        PctVacMore6Mos 
+##           0.454719316           0.029577497          -0.065857491 
+##        MedYrHousBuilt        PctHousNoPhone        PctWOFullPlumb 
+##          -0.030678456           0.026888365          -0.015812956 
+##        OwnOccLowQuart          OwnOccMedVal         OwnOccHiQuart 
+##          -0.126940666          -0.040477855           0.115695280 
+##              RentLowQ            RentMedian             RentHighQ 
+##          -0.223337892           0.000000000          -0.017266624 
+##               MedRent     MedRentPctHousInc      MedOwnCostPctInc 
+##           0.296940859           0.045553448          -0.064042367 
+## MedOwnCostPctIncNoMtg         NumInShelters             NumStreet 
+##          -0.080568724           0.066070255           0.220110372 
+##        PctForeignBorn      PctBornSameState        PctSameHouse85 
+##           0.098234506           0.009711184          -0.049549801 
+##         PctSameCity85        PctSameState85              LandArea 
+##           0.004857393           0.047028285          -0.022155608 
+##               PopDens        PctUsePubTrans   LemasPctOfficDrugUn 
+##          -0.037002983          -0.059769143           0.037396444
+\end{verbatim}
+
+Now, plot the coefficient paths.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot}\NormalTok{(lasso\_model, }\AttributeTok{xvar =} \StringTok{"lambda"}\NormalTok{, }\AttributeTok{label =} \ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{assignment2_files/figure-latex/unnamed-chunk-12-1.pdf}
+
+Next, we need to decide which Lasso model to pick for prediction. Use
+Cross-Validation for this purpose.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{lasso\_cv }\OtherTok{\textless{}{-}} \FunctionTok{cv.glmnet}\NormalTok{(X, y, }\AttributeTok{alpha =} \DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+And plot the Cross-validation results.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot}\NormalTok{(lasso\_cv)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{assignment2_files/figure-latex/unnamed-chunk-14-1.pdf}
+
+In your own words, briefly describe the CV plot. (1) What is plotted
+here, (2) what can you infer about the relation between the number of
+variables and prediction accuracy?
+
+\hypertarget{start-text}{%
+\paragraph{Start text\ldots{}}\label{start-text}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{What is plotted?}
+
+  \begin{itemize}
+  \item
+    The \textbf{x-axis} represents the \textbf{log of the regularization
+    parameter (log(λ))}.
+  \item
+    The \textbf{y-axis} represents the \textbf{Mean Squared Error (MSE)}
+    from cross-validation.
+  \item
+    The \textbf{red dots} indicate the \textbf{MSE values} at different
+    values of \texttt{λ}, and the \textbf{error bars} represent the
+    \textbf{standard deviation} of the MSE across folds.
+  \item
+    The \textbf{vertical dashed lines} indicate two specific lambda
+    values:
+
+    \begin{itemize}
+    \item
+      The \textbf{leftmost} dashed line represents \textbf{lambda.min}
+      (the \texttt{λ} that minimizes MSE).
+    \item
+      The \textbf{rightmost} dashed line represents \textbf{lambda.1se}
+      (the largest \texttt{λ} within one standard error of the minimum
+      MSE).
+    \end{itemize}
+  \end{itemize}
+\item
+  \textbf{What can you infer about the relation between the number of
+  variables and prediction accuracy?}
+
+  \begin{itemize}
+  \item
+    As \textbf{log(λ) decreases (moving left)}, more variables are
+    included in the model, and MSE remains relatively low.
+  \item
+    As \textbf{log(λ) increases (moving right)}, more regularization is
+    applied, shrinking coefficients and \textbf{removing variables},
+    which initially does not impact MSE much but eventually increases
+    MSE sharply.
+  \item
+    The optimal model (lambda.min) balances \textbf{predictive accuracy
+    and regularization}, preventing overfitting while keeping important
+    variables.
+  \item
+    The lambda.1se model is a more conservative choice, using fewer
+    variables while keeping MSE close to optimal.
+  \end{itemize}
+\end{enumerate}
+
+\hypertarget{end}{%
+\paragraph{end}\label{end}}
+
+Now, store the lambda value of the model with the smallest CV error as
+\texttt{bestlam1}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{coef}\NormalTok{(lasso\_cv, }\AttributeTok{s =} \StringTok{"lambda.min"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 100 x 1 sparse Matrix of class "dgCMatrix"
+##                                 s1
+## (Intercept)            0.626454041
+## population            -0.073108775
+## householdsize          .          
+## racepctblack           0.124620894
+## racePctWhite          -0.079566150
+## racePctAsian           .          
+## racePctHisp            0.014730942
+## agePct12t21            .          
+## agePct12t29           -0.225370484
+## agePct16t24            .          
+## agePct65up             0.058862760
+## numbUrban             -0.008814581
+## pctUrban               0.040671250
+## medIncome              .          
+## pctWWage              -0.212551924
+## pctWFarmSelf           0.023641638
+## pctWInvInc            -0.098153924
+## pctWSocSec             .          
+## pctWPubAsst           -0.027943230
+## pctWRetire            -0.098877076
+## medFamInc              0.028317848
+## perCapInc              .          
+## whitePerCap           -0.106074965
+## blackPerCap           -0.001625030
+## indianPerCap          -0.022513982
+## AsianPerCap            0.011381908
+## HispPerCap             0.065523981
+## NumUnderPov           -0.041113004
+## PctPopUnderPov        -0.161705248
+## PctLess9thGrade       -0.077499582
+## PctNotHSGrad           0.074030252
+## PctBSorMore            0.065865601
+## PctUnemployed         -0.005840137
+## PctEmploy              0.169552336
+## PctEmplManu           -0.051771070
+## PctEmplProfServ        .          
+## PctOccupManu           0.042000521
+## PctOccupMgmtProf       0.004341445
+## MalePctDivorce         0.152248735
+## MalePctNevMarr         0.163127056
+## FemalePctDiv          -0.133643568
+## TotalPctDiv            .          
+## PersPerFam             .          
+## PctFam2Par             .          
+## PctKids2Par           -0.359984195
+## PctYoungKids2Par       .          
+## PctTeen2Par            .          
+## PctWorkMomYoungKids    0.020371444
+## PctWorkMom            -0.145197454
+## NumIlleg              -0.006704613
+## PctIlleg               0.172133208
+## NumImmig              -0.128326565
+## PctImmigRecent         0.012879973
+## PctImmigRec5          -0.006315459
+## PctImmigRec8           .          
+## PctImmigRec10          .          
+## PctRecentImmig         .          
+## PctRecImmig5           .          
+## PctRecImmig8           .          
+## PctRecImmig10          .          
+## PctSpeakEnglOnly       .          
+## PctNotSpeakEnglWell   -0.039171183
+## PctLargHouseFam       -0.102789150
+## PctLargHouseOccup      .          
+## PersPerOccupHous       0.321627019
+## PersPerOwnOccHous     -0.046300219
+## PersPerRentOccHous    -0.028423518
+## PctPersOwnOccup       -0.093373260
+## PctPersDenseHous       0.146805295
+## PctHousLess3BR         0.075586239
+## MedNumBR              -0.002763198
+## HousVacant             0.229531578
+## PctHousOccup          -0.053618862
+## PctHousOwnOcc          .          
+## PctVacantBoarded       0.024878463
+## PctVacMore6Mos        -0.049384338
+## MedYrHousBuilt        -0.016083961
+## PctHousNoPhone         0.027328815
+## PctWOFullPlumb        -0.012036505
+## OwnOccLowQuart        -0.015258541
+## OwnOccMedVal           .          
+## OwnOccHiQuart          .          
+## RentLowQ              -0.188426650
+## RentMedian             .          
+## RentHighQ              .          
+## MedRent                0.191343088
+## MedRentPctHousInc      0.055593706
+## MedOwnCostPctInc      -0.049184489
+## MedOwnCostPctIncNoMtg -0.084826396
+## NumInShelters          0.027152634
+## NumStreet              0.217492919
+## PctForeignBorn         0.033655726
+## PctBornSameState       .          
+## PctSameHouse85        -0.013489322
+## PctSameCity85          0.004563341
+## PctSameState85         0.032132804
+## LandArea               .          
+## PopDens               -0.020713292
+## PctUsePubTrans        -0.048993232
+## LemasPctOfficDrugUn    0.035317249
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{bestlam1 }\OtherTok{\textless{}{-}}\NormalTok{ lasso\_cv}\SpecialCharTok{$}\NormalTok{lambda.min}
+\end{Highlighting}
+\end{Shaded}
+
+Create \texttt{bestlalasso\_model} as the lambda according to the
+1-standard error rule.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{lambda\_1se }\OtherTok{\textless{}{-}}\NormalTok{ lasso\_cv}\SpecialCharTok{$}\NormalTok{lambda}\FloatTok{.1}\NormalTok{se}
+\NormalTok{bestlalasso\_model }\OtherTok{\textless{}{-}} \FunctionTok{glmnet}\NormalTok{(X, y, }\AttributeTok{alpha =} \DecValTok{1}\NormalTok{, }\AttributeTok{lambda =}\NormalTok{ lambda\_1se)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{prediction-in-test-set}{%
+\subsubsection{Prediction in test set}\label{prediction-in-test-set}}
+
+Finally, we investigate the performance of our models in the test set.
+For this task, construct a X matrix from the test set.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Xt }\OtherTok{\textless{}{-}} \FunctionTok{model.matrix}\NormalTok{(ViolentCrimesPerPop}\SpecialCharTok{\textasciitilde{}}\NormalTok{.}\SpecialCharTok{{-}}\NormalTok{state}\SpecialCharTok{{-}}\NormalTok{communityname}\SpecialCharTok{{-}}\NormalTok{fold, }
+                  \AttributeTok{data =}\NormalTok{ crime\_test)[,}\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+Use the \texttt{predict} function to generate predicted values for both
+models (i.e., both lambdas stored earlier).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Generate predictions using lambda.min}
+\NormalTok{pred\_min }\OtherTok{\textless{}{-}} \FunctionTok{predict}\NormalTok{(lasso\_cv}\SpecialCharTok{$}\NormalTok{glmnet.fit, }\AttributeTok{newx =}\NormalTok{ Xt, }\AttributeTok{s=}\NormalTok{bestlam1)}
+
+\CommentTok{\# Generate predictions using lambda.1se}
+\NormalTok{pred\_1se }\OtherTok{\textless{}{-}} \FunctionTok{predict}\NormalTok{(lasso\_cv}\SpecialCharTok{$}\NormalTok{glmnet.fit, }\AttributeTok{newx =}\NormalTok{ Xt, }\AttributeTok{s=}\NormalTok{lambda\_1se)}
+
+\CommentTok{\# Print first few predicted values for both models}
+\FunctionTok{print}\NormalTok{(}\StringTok{"Predictions using lambda.min:"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Predictions using lambda.min:"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{print}\NormalTok{(}\FunctionTok{head}\NormalTok{(pred\_min))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##            s1
+## 1  0.18232034
+## 3  0.35623657
+## 6  0.24714751
+## 7  0.10683235
+## 14 0.03617303
+## 16 0.17735969
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{print}\NormalTok{(}\StringTok{"Predictions using lambda.1se:"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Predictions using lambda.1se:"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{print}\NormalTok{(}\FunctionTok{head}\NormalTok{(pred\_1se))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##            s1
+## 1  0.22558642
+## 3  0.34440950
+## 6  0.22564394
+## 7  0.06931086
+## 14 0.02784399
+## 16 0.16567335
+\end{verbatim}
+
+Compute the test MSE of our models.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{y\_test }\OtherTok{\textless{}{-}}\NormalTok{ crime\_test}\SpecialCharTok{$}\NormalTok{ViolentCrimesPerPop}
+\NormalTok{pred\_bestlam1 }\OtherTok{\textless{}{-}} \FunctionTok{predict}\NormalTok{(lasso\_cv}\SpecialCharTok{$}\NormalTok{glmnet.fit, }\AttributeTok{newx =}\NormalTok{ Xt, }\AttributeTok{s =}\NormalTok{ bestlam1)}
+\NormalTok{pred\_bestlalasso }\OtherTok{\textless{}{-}} \FunctionTok{predict}\NormalTok{(lasso\_cv}\SpecialCharTok{$}\NormalTok{glmnet.fit, }\AttributeTok{newx =}\NormalTok{ Xt, }\AttributeTok{s =}\NormalTok{ lambda\_1se)}
+
+\CommentTok{\# Compute MSE for both models}
+\NormalTok{mse\_bestlam1 }\OtherTok{\textless{}{-}} \FunctionTok{mean}\NormalTok{((y\_test }\SpecialCharTok{{-}}\NormalTok{ pred\_bestlam1)}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{)}
+\NormalTok{mse\_bestlalasso }\OtherTok{\textless{}{-}} \FunctionTok{mean}\NormalTok{((y\_test }\SpecialCharTok{{-}}\NormalTok{ pred\_bestlalasso)}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{)}
+
+\CommentTok{\# Print the MSE values}
+\FunctionTok{print}\NormalTok{(}\FunctionTok{paste}\NormalTok{(}\StringTok{"Test MSE for bestlam1 (lambda.min):"}\NormalTok{, mse\_bestlam1))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Test MSE for bestlam1 (lambda.min): 0.0185969090174034"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{print}\NormalTok{(}\FunctionTok{paste}\NormalTok{(}\StringTok{"Test MSE for bestlalasso\_model (lambda.1se):"}\NormalTok{, mse\_bestlalasso))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Test MSE for bestlalasso_model (lambda.1se): 0.0192519302735911"
+\end{verbatim}
+
+In addition, use another performance metric and compute the
+corresponding values for both models.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Compute Mean Absolute Error (MAE) for both models}
+\NormalTok{mae\_bestlam1 }\OtherTok{\textless{}{-}} \FunctionTok{mean}\NormalTok{(}\FunctionTok{abs}\NormalTok{(y\_test }\SpecialCharTok{{-}}\NormalTok{ pred\_bestlam1))}
+\NormalTok{mae\_bestlalasso }\OtherTok{\textless{}{-}} \FunctionTok{mean}\NormalTok{(}\FunctionTok{abs}\NormalTok{(y\_test }\SpecialCharTok{{-}}\NormalTok{ pred\_bestlalasso))}
+
+\CommentTok{\# Print the MAE values}
+\FunctionTok{print}\NormalTok{(}\FunctionTok{paste}\NormalTok{(}\StringTok{"Test MAE for bestlam1 (lambda.min):"}\NormalTok{, mae\_bestlam1))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Test MAE for bestlam1 (lambda.min): 0.0949489822614771"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{print}\NormalTok{(}\FunctionTok{paste}\NormalTok{(}\StringTok{"Test MAE for bestlalasso\_model (lambda.1se):"}\NormalTok{, mae\_bestlalasso))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Test MAE for bestlalasso_model (lambda.1se): 0.0959548891609138"
+\end{verbatim}
+
+Which model is better? Does it depend on the performance measure that is
+used?
+
+\hypertarget{start-text-1}{%
+\paragraph{Start text\ldots{}}\label{start-text-1}}
+
+Based on the \textbf{Test MSE and Test MAE}, the \textbf{bestlam1
+(lambda.min) model performs better} than the \textbf{bestlalasso\_model
+(lambda.1se)} because it has lower values for both metrics:
+
+\begin{itemize}
+\item
+  \textbf{Test MSE}:
+
+  \begin{itemize}
+  \item
+    bestlam1 (λ.min) = \textbf{0.0186} (lower is better)
+  \item
+    bestlalasso\_model (λ.1se) = \textbf{0.0193}
+  \end{itemize}
+\item
+  \textbf{Test MAE}:
+
+  \begin{itemize}
+  \item
+    bestlam1 (λ.min) = \textbf{0.09498}
+  \item
+    bestlalasso\_model (λ.1se) = \textbf{0.09617}
+  \end{itemize}
+\end{itemize}
+
+\hypertarget{does-it-depend-on-the-performance-measure}{%
+\subsubsection{Does it depend on the performance
+measure?}\label{does-it-depend-on-the-performance-measure}}
+
+In this case, both \textbf{MSE and MAE agree} that the \textbf{bestlam1
+model is better}. However, different performance measures can sometimes
+favor different models.
+
+\begin{itemize}
+\item
+  \textbf{MSE} penalizes large errors more due to squaring the
+  differences, making it more sensitive to outliers.
+\item
+  \textbf{MAE} is more robust to outliers but does not differentiate
+  between small and large errors as strongly as MSE.
+\end{itemize}
+
+Since both metrics suggest that \textbf{bestlam1 performs better}
+
+\hypertarget{end-1}{%
+\paragraph{end}\label{end-1}}
+
+\end{document}

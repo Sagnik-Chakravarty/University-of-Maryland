@@ -1,0 +1,244 @@
+---
+title: "Assignment 1"
+subtitle: 'SURV 640'
+author: 'Sagnik Chakravarty'
+output:
+  pdf_document:
+---
+
+\newpage
+
+## Setup
+
+```{r results='hide', message=FALSE, warning=FALSE}
+library(titanic)
+library(caret)
+library(pROC)
+```
+
+## Data
+
+In this notebook we use the Titanic data that is used on Kaggle (<https://www.kaggle.com>) as an introductory competition for getting familiar with machine learning. It includes information on a set of Titanic passengers, such as age, sex, ticket class and whether he or she survived the Titanic tragedy.
+
+Source: <https://www.kaggle.com/c/titanic/data>
+
+```{r}
+titanic <- titanic_train
+str(titanic)
+```
+
+We begin with some minor data preparations. The `lapply()` function is a handy tool if the task is to apply the same transformation (e.g. `as.factor()`) to multiple columns of a data frame.
+
+```{r}
+titanic[, c(2:3,5,12)] <- lapply(titanic[, c(2:3,5,12)], as.factor)
+```
+
+The `age` variable has some NAs, as a quick and dirty solution we can create a categorized age variable with NAs as an additional factor level.
+
+```{r}
+titanic$Age_c <- cut(titanic$Age, 5)
+titanic$Age_c <- addNA(titanic$Age_c)
+summary(titanic$Age_c)
+```
+
+## Train and test set
+
+Next we split the data into a training (80%) and a test (20%) part. This can be done by random sampling with `sample()`.
+
+```{r}
+set.seed(9395)
+# Add code here
+
+train_indices <- sample(1:nrow(titanic), 
+                        size = round(nrow(titanic)*0.8))
+train <- titanic[train_indices, ]
+test <- titanic[-train_indices, ]
+cat('The dimension of training data:\t', dim(train), '\n',
+    'The dimension of test data:\t', dim(test), '\n')
+```
+
+## Logistic regression
+
+In this exercise we simply use logistic regression as our prediction method, since we want to focus on the evaluation part. Build a first logit model with `Survived` as the outcome and `Pclass`, `Sex`, `Age_c`, `Fare` and `Embarked` as features.
+
+```{r}
+log_model <- glm(Survived ~ Pclass+Sex+Age_c+Fare+Embarked,
+                 data = train, 
+                 family = 'binomial')
+
+summary(log_model)
+```
+
+A quick look at the coefficients of the first logit model.
+
+```{r}
+data.frame(
+  Coefficient = log_model$coefficients
+)
+```
+
+Now, build an additional logit model that uses the same features, but includes at least one interaction or non-linear term.
+
+```{r}
+mod_log_model <- glm(Survived ~ Pclass+Sex+Age_c*Fare+Embarked,
+                     data = train,
+                     family = 'binomial')
+```
+
+Again, summarize the resulting object.
+
+```{r}
+summary(mod_log_model)
+```
+
+## Prediction in test set
+
+Given both logit objects, we can generate predicted risk scores/ predicted probabilities of `Survived` in the test set.
+
+```{r}
+test$SurvPredictlogit <- predict(log_model, newdata = test, type = 'response')
+test$SurvPredictlogitInteraction <- predict(mod_log_model, newdata = test, type = 'response')
+
+head(test[, c('Survived', 'SurvPredictlogit', 'SurvPredictlogitInteraction')])
+```
+
+It is often useful to first get an idea of prediction performance independent of specific classification thresholds. Use the `pROC` (or `PRROC`) package to create roc objects for both risk score vectors.
+
+```{r warning=FALSE, message=FALSE}
+library(pROC)
+# ROC object for the basic logistic regression model
+roc_logit <- roc(test$Survived, test$SurvPredictlogit, levels = c(0, 1))
+
+# ROC object for the interaction logistic regression model
+roc_logit_interaction <- roc(test$Survived, test$SurvPredictlogitInteraction, levels = c(0, 1))
+# Plot the first ROC curve (basic model)
+plot(roc_logit, col = "blue", main = "ROC Curves for Logistic Regression Models", lwd = 2)
+
+# Plot the second ROC curve (interaction model) with transparency
+plot(roc_logit_interaction, col = rgb(1, 0, 0, 0.7), add = TRUE, lwd = 2)  # Red color with 50% transparency
+
+# Add a legend
+legend("bottomright", legend = c("Basic Model", "Interaction Model"), 
+       col = c("blue", rgb(1, 0, 0, 0.7)), lwd = 2)
+# AUC for the basic model
+auc_logit <- auc(roc_logit)
+
+# AUC for the interaction model
+auc_logit_interaction <- auc(roc_logit_interaction)
+
+# Print AUC values
+print(paste("AUC for Basic Model:", round(auc_logit, 3)))
+print(paste("AUC for Interaction Model:", round(auc_logit_interaction, 3)))
+
+
+```
+
+Now, you can print and plot the resulting `roc` objects.
+
+```{r}
+# Print ROC details for the basic model
+print(roc_logit)
+
+# Print ROC details for the interaction model
+print(roc_logit_interaction)
+```
+
+In your own words, how would you interpret these ROC curves? What do you think about the ROC-AUCs we observe here?
+
+-   **Area Under the Curve (AUC)**:
+
+    -   The **basic logistic regression model** has an AUC of **0.8166**, indicating good discriminative ability.
+
+    -   The **interaction model** has a slightly higher AUC of **0.8212**, suggesting it performs marginally better at distinguishing between survivors and non-survivors.
+
+-   **What AUC Represents**:
+
+    -   AUC measures the ability of a model to distinguish between classes (e.g., survivors vs. non-survivors) regardless of the classification threshold.
+
+    -   An AUC of 0.5 indicates no discriminative power (equivalent to random guessing), while an AUC of 1.0 indicates perfect discrimination.
+
+    -   Both models here have AUCs well above 0.8, which is considered good. This suggests that the models have strong predictive performance.
+
+-   **Comparison of Models**:
+
+    -   The interaction model performs slightly better, with an AUC improvement of approximately **0.0046** (from 0.8166 to 0.8212).
+
+    -   The inclusion of interaction terms or non-linear transformations might capture relationships between variables that the basic model misses, leading to this small improvement.
+
+-   **Practical Implications**:
+
+    -   The small difference in AUC values suggests that while the interaction model has slightly better predictive performance, the improvement may not be substantial in practical terms.
+
+    -   Both models are likely adequate for most use cases, but the interaction model could be preferred if higher predictive accuracy is critical.
+
+#### Start text...
+
+#### end
+
+As a next step, we want to predict class membership given the risk scores of our two models. Here we use the default classification threshold, 0.5.
+
+```{r}
+# Predicted class for the basic logistic regression model
+test$Predicted_Class_Logit <- ifelse(test$SurvPredictlogit >= 0.5, 1, 0)
+
+# Predicted class for the interaction logistic regression model
+test$Predicted_Class_Logit_Interaction <- ifelse(test$SurvPredictlogitInteraction >= 0.5, 1, 0)
+
+# View the predictions
+head(test[, c("Survived", "SurvPredictlogit", "SurvPredictlogitInteraction", 
+                   "Predicted_Class_Logit", "Predicted_Class_Logit_Interaction")])
+
+```
+
+On this basis, we can use `confusionMatrix()` to get some performance measures for the predicted classes.
+
+```{r}
+library(caret)
+
+# Confusion matrix for the basic model
+confusionMatrix(as.factor(test$Predicted_Class_Logit), as.factor(test$Survived))
+
+# Confusion matrix for the interaction model
+confusionMatrix(as.factor(test$Predicted_Class_Logit_Interaction), as.factor(test$Survived))
+```
+
+Briefly explain potential limitations when measuring prediction performance as carried out in the last two code chunks.
+
+### 1. **Imbalanced Classes**:
+
+-   **Prevalence**: The dataset shows a prevalence of 62.92% for class 0 (non-survivors), which means the classes are imbalanced. This can affect performance metrics, especially if the model is biased towards the majority class.
+
+-   **Impact**: The accuracy metric (79.78%) might seem high, but it could be misleading if the model simply predicts the majority class (0) most of the time. For instance, predicting `0` for most observations would still yield a high accuracy if most of the observations are `0`.
+
+### 2. **Accuracy vs. Other Metrics**:
+
+-   **Accuracy**: While accuracy is a common metric, it is not always the best measure, especially in imbalanced datasets. A model could achieve high accuracy by predicting the majority class correctly most of the time, but it might not perform well in identifying the minority class (1, survivors in this case).
+
+-   **Alternative Metrics**: Sensitivity (recall) and specificity are more informative in this case. For example:
+
+    -   **Sensitivity**: The model correctly identifies 86.61% of survivors (class 1), which is good.
+
+    -   **Specificity**: The model correctly identifies 68.18% of non-survivors (class 0), which is lower, indicating room for improvement in detecting the majority class.
+
+### 3. **Positive Predictive Value (PPV) and Negative Predictive Value (NPV)**:
+
+-   **Positive Predictive Value**: The model predicts `Survived` (class 1) 82.20% of the time correctly, which is good, but this metric may not always be stable if the class distribution changes.
+
+-   **Negative Predictive Value**: The model correctly predicts `Not Survived` (class 0) 75.00% of the time. While it is decent, it's important to consider that PPV and NPV are sensitive to the prevalence of the classes.
+
+### Start text...
+
+#### end
+
+Please use the table on the previous page:\
+1. Write down what is I and J?
+
+I- Gender, j- age\
+2. Write down the table in IxJ notation\
+3. Data as the table form is saved on canvas website drunk.dat:\
+4. Write down the case level data for this table with the following\
+variable names and give definitions (min/max, value labels):\
+Case Number Sex Age Disease\
+5. Using table data calculate a X2 test of association by hand (or in\
+a spreadsheet), that is, not using R.\
+15 / 32 Suzer-Gurtekin in-Class 2

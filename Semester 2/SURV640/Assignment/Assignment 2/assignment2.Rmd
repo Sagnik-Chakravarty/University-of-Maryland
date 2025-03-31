@@ -1,0 +1,250 @@
+---
+title: "Assignment 2"
+author: "Sagnik Chakravarty"
+output:
+  html_document:
+    df_print: paged
+---
+
+## Setup
+
+```{r results='hide', message=FALSE, warning=FALSE}
+library(glmnet)
+library(caret)
+```
+
+## Data
+
+For this exercise we use the Communities and Crime data from the UCI ML repository, which includes information about communities in the US. "The data combines socio-economic data from the 1990 US Census, law enforcement data from the 1990 US LEMAS survey, and crime data from the 1995 FBI UCR"
+
+Source: <https://archive.ics.uci.edu/ml/datasets/Communities+and+Crime>
+
+First, some data prep.
+
+```{r}
+crime <- read.csv("communities.data", header = FALSE, na.strings = "?")
+varnames <- read.delim("communities.txt", header = FALSE)
+```
+
+Clean name vector and use as variable names.
+
+```{r}
+varnames <- as.character(varnames$V1)
+varnames <- gsub("@attribute ", "", varnames)
+varnames <- gsub(" numeric", "", varnames)
+varnames <- gsub(" string", "", varnames)
+names(crime) <- varnames
+```
+
+To make things easier, drop columns with missing values.
+
+```{r}
+crime <- crime[, colSums(is.na(crime)) == 0]
+```
+
+Check whats left.
+
+```{r}
+str(crime)
+```
+
+## Train and test set
+
+Next, we want to split the data into a training (75%) and a test (25%) part. This can be done by random sampling with `sample`. Note that there is a `fold` variable in the data set, but here we want to follow our own train/test procedure.
+
+```{r}
+set.seed(3940)
+
+train_indices <- sample(1:nrow(crime),
+                        size = round(nrow(crime)*0.75))
+crime_train <- crime[train_indices,]
+crime_test <- crime[-train_indices,]
+```
+
+Now, prepare the training data for running regularized regression models via `glmnet`. Our prediction outcome is `ViolentCrimesPerPop`. As X, use all variables except `state`, `communityname`, and `fold`.
+
+```{r}
+X <- model.matrix(ViolentCrimesPerPop~.-state-communityname-fold, 
+                  data = crime_train)[,-1]
+
+y <- crime_train$ViolentCrimesPerPop
+```
+
+Check whether X looks ok.
+
+```{r}
+dim(X)
+```
+
+### Lasso
+
+Estimate a sequence of Lasso models using `glmnet`. You can stick with the defaults for choosing a range of lambdas.
+
+```{r}
+lasso_model <- glmnet(X, y, alpha = 1)
+```
+
+Here we want to display lambda and the coefficients of the first Lasso model.
+
+```{r}
+lasso_model$lambda[1]
+lasso_model$beta[1]
+```
+
+Same for the last Lasso model.
+
+```{r}
+lasso_model$lambda[1]
+lasso_model$lambda[(ncol(lasso_model$beta)/2)]
+lasso_model$lambda[ncol(lasso_model$beta)]
+lasso_model$beta[,1]
+lasso_model$beta[,(ncol(lasso_model$beta)/2)]
+lasso_model$beta[,ncol(lasso_model$beta)]
+```
+
+Now, plot the coefficient paths.
+
+```{r}
+plot(lasso_model, xvar = "lambda", label = TRUE)
+```
+
+Next, we need to decide which Lasso model to pick for prediction. Use Cross-Validation for this purpose.
+
+```{r}
+lasso_cv <- cv.glmnet(X, y, alpha = 1)
+```
+
+And plot the Cross-validation results.
+
+```{r}
+plot(lasso_cv)
+```
+
+In your own words, briefly describe the CV plot. (1) What is plotted here, (2) what can you infer about the relation between the number of variables and prediction accuracy?
+
+#### Start text...
+
+1.  **What is plotted?**
+
+    -   The **x-axis** represents the **log of the regularization parameter (log(λ))**.
+
+    -   The **y-axis** represents the **Mean Squared Error (MSE)** from cross-validation.
+
+    -   The **red dots** indicate the **MSE values** at different values of `λ`, and the **error bars** represent the **standard deviation** of the MSE across folds.
+
+    -   The **vertical dashed lines** indicate two specific lambda values:
+
+        -   The **leftmost** dashed line represents **lambda.min** (the `λ` that minimizes MSE).
+
+        -   The **rightmost** dashed line represents **lambda.1se** (the largest `λ` within one standard error of the minimum MSE).
+
+2.  **What can you infer about the relation between the number of variables and prediction accuracy?**
+
+    -   As **log(λ) decreases (moving left)**, more variables are included in the model, and MSE remains relatively low.
+
+    -   As **log(λ) increases (moving right)**, more regularization is applied, shrinking coefficients and **removing variables**, which initially does not impact MSE much but eventually increases MSE sharply.
+
+    -   The optimal model (lambda.min) balances **predictive accuracy and regularization**, preventing overfitting while keeping important variables.
+
+    -   The lambda.1se model is a more conservative choice, using fewer variables while keeping MSE close to optimal.
+
+#### end
+
+Now, store the lambda value of the model with the smallest CV error as `bestlam1`.
+
+```{r}
+coef(lasso_cv, s = "lambda.min")
+bestlam1 <- lasso_cv$lambda.min
+```
+
+Create `bestlalasso_model` as the lambda according to the 1-standard error rule.
+
+```{r}
+lambda_1se <- lasso_cv$lambda.1se
+bestlalasso_model <- glmnet(X, y, alpha = 1, lambda = lambda_1se)
+```
+
+### Prediction in test set
+
+Finally, we investigate the performance of our models in the test set. For this task, construct a X matrix from the test set.
+
+```{r}
+Xt <- model.matrix(ViolentCrimesPerPop~.-state-communityname-fold, 
+                  data = crime_test)[,-1]
+```
+
+Use the `predict` function to generate predicted values for both models (i.e., both lambdas stored earlier).
+
+```{r}
+# Generate predictions using lambda.min
+pred_min <- predict(lasso_cv$glmnet.fit, newx = Xt, s=bestlam1)
+
+# Generate predictions using lambda.1se
+pred_1se <- predict(lasso_cv$glmnet.fit, newx = Xt, s=lambda_1se)
+
+# Print first few predicted values for both models
+print("Predictions using lambda.min:")
+print(head(pred_min))
+
+print("Predictions using lambda.1se:")
+print(head(pred_1se))
+```
+
+Compute the test MSE of our models.
+
+```{r}
+y_test <- crime_test$ViolentCrimesPerPop
+pred_bestlam1 <- predict(lasso_cv$glmnet.fit, newx = Xt, s = bestlam1)
+pred_bestlalasso <- predict(lasso_cv$glmnet.fit, newx = Xt, s = lambda_1se)
+
+# Compute MSE for both models
+mse_bestlam1 <- mean((y_test - pred_bestlam1)^2)
+mse_bestlalasso <- mean((y_test - pred_bestlalasso)^2)
+
+# Print the MSE values
+print(paste("Test MSE for bestlam1 (lambda.min):", mse_bestlam1))
+print(paste("Test MSE for bestlalasso_model (lambda.1se):", mse_bestlalasso))
+```
+
+In addition, use another performance metric and compute the corresponding values for both models.
+
+```{r}
+# Compute Mean Absolute Error (MAE) for both models
+mae_bestlam1 <- mean(abs(y_test - pred_bestlam1))
+mae_bestlalasso <- mean(abs(y_test - pred_bestlalasso))
+
+# Print the MAE values
+print(paste("Test MAE for bestlam1 (lambda.min):", mae_bestlam1))
+print(paste("Test MAE for bestlalasso_model (lambda.1se):", mae_bestlalasso))
+
+```
+
+Which model is better? Does it depend on the performance measure that is used?
+
+#### Start text...
+
+Based on the **Test MSE and Test MAE**, the **bestlam1 (lambda.min) model performs better** than the **bestlalasso_model (lambda.1se)** because it has lower values for both metrics:
+
+-   **Test MSE**:
+
+    -   bestlam1 (λ.min) = **0.0186** (lower is better)
+
+    -   bestlalasso_model (λ.1se) = **0.0193**
+
+-   **Test MAE**:
+
+    -   bestlam1 (λ.min) = **0.09498**
+
+    -   bestlalasso_model (λ.1se) = **0.09617**
+
+### Does it depend on the performance measure?
+
+In this case, both **MSE and MAE agree** that the **bestlam1 model is better**. However, different performance measures can sometimes favor different models.
+
+-   **MSE** penalizes large errors more due to squaring the differences, making it more sensitive to outliers.
+
+-   **MAE** is more robust to outliers but does not differentiate between small and large errors as strongly as MSE.
+
+Since both metrics suggest that **bestlam1 performs better**
+
+#### end

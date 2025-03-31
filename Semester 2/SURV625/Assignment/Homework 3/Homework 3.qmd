@@ -1,0 +1,256 @@
+---
+title: "SURV625, HW-3"
+author: "Sagnik Chakravarty"
+format:
+  pdf:
+    latex_engine: xelatex
+header-includes:
+  - \usepackage[a4paper, margin=0.5in]{geometry}
+toc: FALSE
+lot: FALSE
+editor: visual
+---
+
+\newpage
+
+\tableofcontents
+
+\newpage
+
+# Question 1
+
+The following are cluster totals $y_\alpha$ from a = 20 clusters of exactly b = 10 women (between the ages of 15 and 24) each. These clusters and the young women were sampled from the population frame used for Homework 1. The cluster totals $y_\alpha$ are the number of women who have ever been pregnant. Assume that the clusters were selected at random and *with replacement*, and the students were selected with *epsem* and *without replacement*. The sampling fraction is f = ab/AB = n/N = 200/2,920 = 1/14.6, meaning that the finite population correction (fpc) should not be ignored in this case.
+
+| $$                               
+         \alpha                    
+         $$                        | **1**  | **2**  | **3**  | **4**  | **5**  | **6**  | **7**  | **8**  | **9**  | **10** |
+|----------------------------------|--------|--------|--------|--------|--------|--------|--------|--------|--------|--------|
+| $$                               
+         y_\alpha                  
+         $$                        | 4      | 4      | 3      | 6      | 4      | 6      | 3      | 4      | 4      | 1      |
+| $$                               
+         \alpha                    
+         $$                        | **11** | **12** | **13** | **14** | **15** | **16** | **17** | **18** | **19** | **20** |
+| $$                               
+         y_\alpha                  
+         $$                        | 1      | 8      | 3      | 3      | 5      | 6      | 4      | 5      | 8      | 5      |
+
+## a. Compute an estimate of the mean $\bar{y}$, its standard error, and a 95% confidence interval for the population mean. (Hint: the degrees of freedom used in computing this confidence interval should not be 199.)
+
+### Code
+
+```{r message=FALSE, warning=FALSE}
+library(knitr)
+library(dplyr)
+library(kableExtra)
+df <- data.frame(alpha = 1:20, 
+                 y_alpha = c(4,4,3,6,4,6,3,4,4,1,1,8,3,3,5,6,4,5,8,5))
+kable(t(df), format = 'latex')
+y_bar <- df %>% select(y_alpha) %>% sum()/20
+s2_y <- df %>% 
+  mutate('(y-y_bar)^2' = (y_alpha - y_bar)^2) %>%
+  select(`(y-y_bar)^2`) %>% sum()/19
+se <- sqrt(s2_y * (1-200/2920)/(20*100))
+lbound <- y_bar - qt(p = 0.975, df = 19)*se
+ubound <- y_bar + qt(p = 0.975, df = 19)*se
+cat('Sample Mean:\t', y_bar,
+    '\nSample Variance:\t', s2_y,
+    '\nSample Standard Error:\t', se,
+    '\n95% Confidence Interval:\t(', lbound, ',', ubound, ')')
+```
+
+### Calculation
+
+$$
+\begin{aligned}
+&\text{Sample Mean: }\bar{y} = \frac{1}{\alpha}\sum_{\alpha = 1}^{20}y_\alpha = \frac{87}{20} = 4.35\\
+&\text{Sample Variance: }s^2_y = \frac{1}{\alpha-1}\sum_{\alpha=1}^{20}(y_\alpha-\bar{y}) = \frac{1}{19}\sum(y_\alpha-4.35) = \frac{66.55}{19} \approx 3.503\\
+&\text{Standard Error: }SE(\bar{y}) = \sqrt{\frac{s^2_y}{\alpha b^2}\times(1-f)}=\sqrt{\frac{3.503}{20\times10^2}\times\left(1-\frac{20}{2920}\right)} \approx 0.0404\\
+&\text{95\% Confidence Interval: }CI=\bar{y}\pm t_{1-\alpha/2, df}\times SE(\bar{y}) = 4.35\pm 2.093\times0.404 =[3.505, 5.195]
+\end{aligned}
+$$
+
+The sample mean $\bar{y}$ of women who have ever been pregnant across 20 clusters is **4.35** with a standard error (SE) of **0.0404**. The 95% confidence interval (CI) for the population mean is **\[4.265462 , 4.434538\]**. This interval reflects uncertainty accounting for the cluster sampling design, where degrees of freedom (df = 19) align with the number of clusters rather than individual observations[1]{.underline}. The finite population correction (fpc) factor of 0.931 slightly narrows the CI compared to a design without fpc.
+
+## b. Estimate the standard error of the mean that you would expect if the sample consisted of a = 40 clusters of b = 10 each. (Hint: What about this design has not changed, and what quantity needed to answer this question could therefore be considered portable?)
+
+### Code
+
+```{r}
+se_new <- sqrt((1-400/2920)*s2_y/(40*10^2))
+cat('The new standard error with a = 40 is:\t', se_new)
+```
+
+### Calculation
+
+$$
+\begin{aligned}
+&SE_{new}(\bar{y}) = \sqrt{\frac{(1-f_{new})s^2_y}{\alpha_{new}\times b^2}} = \sqrt{\frac{(1-\frac{400}{2920})3.503}{40\times 10^2}} = 0.0275
+\end{aligned}
+$$
+
+Increasing the number of clusters from 20 to 40 (while maintaining 10 women per cluster) reduces the standard error to 0.0275, a 32% decrease from the original SE. This improvement stems from the inverse relationship between cluster count and variance:
+
+$$ SE \propto \frac{1}{a} $$
+
+where $a$ is the number of clusters. The portable quantity here is the between-cluster variance:
+
+$$ s_y^2 = 3.503 $$
+
+which remains stable under the assumption of similar cluster homogeneity.
+
+## c. Note that the mean $\bar{y}$ is a proportion. Based on the sample of 20 clusters \[and ignoring the ratio n / (n – 1)\], compute the design effect deff, as well as roh. How would you interpret the design effect for a colleague in plain English?
+
+### Code
+
+```{r}
+p <- sum(df$y_alpha)/200
+var_srs <- p*(1-p)*(1-200/2920)/200
+var_cluster <- se^2
+deff <- var_cluster/var_srs
+roh <- (deff-1)/9
+
+cat('Design Effect:\t', deff,
+    '\nRate of Heterogenity:\t', roh)
+```
+
+### Calculation
+
+$$
+\begin{aligned}
+&\text{p} = \frac{\text{Total Pregnencies in Sample}}{\text{Total Women Sampled}} = \frac{87}{200} = 0.435\\
+&var_{srs} = \frac{p(1-p)}{n}(1-f)=\frac{0.435\times0.565}{20}\times (1-\frac{200}{2920})= 0.001145\\
+&var_{cluster} = \frac{s^2_y}{\alpha b^2}\times(1-f)=\frac{3.503}{20\times10^2}\times\left(1-\frac{20}{2920}\right) = 0.00163\\\\
+&\text{Design Effect}\\
+&deff=\frac{var_{cluster}}{var_{srs}} = \frac{0.001145}{0.00163} = 1.425\\\\
+&\text{Rate of Heterogenity}\\
+&rho=\frac{deff-1}{b-1}=\frac{1.425-1}{10-1}=\frac{0.425}{9} = 0.0472
+\end{aligned}
+$$
+
+The design effect ($deff = 1.425$) indicates that cluster sampling introduces 42.5% more variance compared to simple random sampling (SRS). This inefficiency arises from similarities within clusters, quantified by the intraclass correlation coefficient ($\rho = 0.047$).
+
+Interpreting $\rho$, approximately 4.7% of the total variance in pregnancy status is attributable to between-cluster differences. For practical survey design, this implies that while clustering introduces measurable inefficiency, the effect is moderate.
+
+## d. Now, using the computed value of roh from part (c), estimate the standard error that you would expect from a sample of a = 40 clusters of b = 5 women each.
+
+### Code
+
+```{r}
+deff_new <- 1 + (5-1)*roh
+f_new <- 40*5/2920
+var_new <- deff_new*var_srs
+cat('The new stadard error is:\t', sqrt(var_new))
+```
+
+### Calculation
+
+$$
+\begin{aligned}
+&\text{New Design Effect}\\
+&deff_{new} = 1+(b_{new}-1)\cdot roh=1+(5-1)\cdot 0.0472 = 1.18895\\\\
+&\text{Adjusted Variance}\\
+&var_{new} = deff_{new}\times var_{srs} = 1.189\times 0.001145 = 0.00136\\\\
+&\text{New Standard Error}\\
+&SE_{new} = \sqrt{var_{new}} = \sqrt{0.00136} = 0.0369
+\end{aligned}
+$$
+
+For a modified design with 40 clusters of 5 women each, the standard error increases to 0.0369 due to reduced cluster size. This result leverages the previously calculated $\rho$ to estimate the new design effect ($deff_{new} = 1.189$).
+
+The trade-off between cluster size and count highlights the importance of optimizing survey designs to balance cost and precision.
+
+# Question 2
+
+The data set, cherry.csv, contains measurements of diameter (inches), height (feet), and timber volume (cubic feet) for a sample of 31 black cherry trees. Diameter and height of trees are easily measured, but volume is more diﬃcult to measure.
+
+**Data**
+
+```{r}
+cherry <- read.csv('cherry.csv')
+kable(t(cherry), format = 'latex', booktabs = TRUE) %>%
+  kable_styling(latex_options = c("hold_position", "scale_down")) 
+print(dim(cherry)) 
+```
+
+## a. Plot volume vs. diameter for the 31 trees.
+
+### Code
+
+```{r warning=FALSE, message=FALSE}
+library(ggplot2)
+cherry <- read.csv("cherry.csv")
+ggplot(cherry, aes(x = diameter, y = volume)) +
+  geom_point(color = "darkgreen") +
+  labs(
+    title = "Volume vs. Diameter of Black Cherry Trees",
+    x = "Diameter (inches)",
+    y = "Volume (cubic feet)"
+  ) +
+  theme_classic()
+```
+
+### Interpretation
+
+The plot shows a strong positive linear relationship between tree diameter and timber volume. Larger diameters correlate with higher volumes, justifying the use of ratio/regression estimation.
+
+## b. Suppose that these trees are an SRS from a forest of N = 2967 trees and that the sum of the diameters for all trees in the forest is 41,835 inches. Use ratio estimation to estimate the total volume for all trees in the forest. Give a 95% CI.
+
+### Code
+
+```{r}
+n <- nrow(cherry)
+N <- 2967
+T_x <- 41835
+B_ratio <- sum(cherry$volume) / sum(cherry$diameter)
+t_ratio <- B_ratio * T_x
+residuals_ratio <- cherry$volume - B_ratio * cherry$diameter
+s_r_sq <- sum(residuals_ratio^2) / (n - 1)
+se_ratio <- N * sqrt((1 - n/N) * s_r_sq / n)
+t_value_ratio <- qt(0.975, df = n - 1)
+CI_ratio <- t_ratio + c(-1, 1) * t_value_ratio * se_ratio
+
+cat('Ratio Estimator:\t', t_ratio,
+    '\nStandard Error:\t', se_ratio,
+    '\n95% Confidence Interval:\t', CI_ratio)
+```
+
+### Calculation
+
+$$
+\begin{aligned}
+&\hat{t}_y = \frac{\sum y_i}{\sum x_i}\cdot T_x = 95272.16\\
+&SE(\hat{t}_y) = N\sqrt{\left(1-\frac{n}{N}\right)\frac{s^2_r}{n}} = 5140.933 \text{ where } s^2_r = \frac{1}{n-1}\sum(y_i-Bx_i)^2\\
+&CI = \hat{t}_y\pm t_{1-\alpha/2,n-2}SE(\hat{t}_y) = (84772.97, 105771.3)
+\end{aligned}
+$$
+
+## c. Use regression estimation to estimate the total volume for all trees in the forest. Give a 95% CI.
+
+### Code
+
+```{r}
+model <- lm(volume ~ diameter, data = cherry)
+beta <- coef(model)[2]
+y_bar <- mean(cherry$volume)
+x_bar_sample <- mean(cherry$diameter)
+X_bar_pop <- T_x / N
+t_reg <- N * (y_bar + beta * (X_bar_pop - x_bar_sample))
+mse <- sum(residuals(model)^2) / (n - 2)
+se_reg <- N * sqrt((1 - n/N) * mse / n)
+t_value_reg <- qt(0.975, df = n - 2)
+CI_reg <- t_reg + c(-1, 1) * t_value_reg * se_reg
+
+cat('The regression estimate being:\t', t_reg,
+    '\n95% CI:\t', CI_reg)
+```
+
+### Calculations
+
+$$
+\begin{aligned}
+&\hat{t}_y = N\bar{y}+\hat{\beta}(T_x-N\bar{x}) = 102318.9\\
+&SE(\hat{t}_y) = N\sqrt{\left(1-\frac{n}{N}\right)\frac{MSE}{n}} = 2253.97\\
+&CI = \hat{t}_y\pm t_{1-\alpha/2,n-2}SE(\hat{t}_y) = (97708.98, 106928.7)
+\end{aligned}
+$$
