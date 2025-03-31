@@ -351,10 +351,6 @@ Among modifiable risk factors, I found LDL cholesterol particularly influential,
 I was somewhat surprised by the modest but statistically significant effect of Type A personality (OR: 1.03, CI: 1.00-1.06), suggesting psychological factors may play a measurable role in CHD development. The age effect (OR: 1.05, CI: 1.03-1.07) translates to approximately 65% increased odds per decade of life, highlighting the importance of age-appropriate screening practices.
 
 ```{r fig.cap='Odds Ratio with 95% CF'}
-########################
-# Visualization Code #
-########################
-
 # Coefficient plot
 coef_plot <- data.frame(Predictor = names(coef(final_model))[-1],
                        OR = exp(coef(final_model))[-1],
@@ -380,3 +376,23 @@ ggplot(data, aes(x = pred_prob, fill = chd)) +
 ```
 
 The odds ratio plot highlights the relative importance of predictors in the logistic regression model for CHD. Family history (**famhist1**) stands out as the most influential predictor, with an odds ratio of approximately 2.5, indicating individuals with a family history of CHD are 2.5 times more likely to develop the condition compared to those without. LDL cholesterol (**ldl**) and age (**age**) also show strong associations with CHD, with each unit increase in LDL raising CHD odds by 18% and each additional year of age increasing odds by 5%. Tobacco consumption (**tobacco**) and Type A personality (**typea**) have smaller but statistically significant effects, with each additional cigarette/day increasing odds by 8.8% and each unit increase in Type A score raising odds by 2.8%. The confidence intervals for all predictors exclude 1, confirming their significance, and the plot visually emphasizes the large effect size of family history compared to other factors.
+
+# Result
+
+$$
+\text{Model}\sim-5.98+0.0844\times\text{tobacco}+0.16\times\text{ldl}+0.91\times\text{famhist}+0.028\times\text{typea}+0.049\times\text{age}
+$$
+
+The logistic regression model developed to predict the risk of Coronary Heart Disease (CHD) using a dataset of 420 individuals with 10 features demonstrated significant predictive power. The model's key predictors included tobacco use, LDL cholesterol levels, family history of CHD, Type A personality score, and age. The Likelihood Ratio Test confirmed the collective significance of these predictors with a highly significant result (p \< 2.2e-16), indicating their strong explanatory power over a null model. The model's fit was further validated by McFadden's Pseudo R² of 0.2061, suggesting a moderate predictive ability. Stepwise selection using AIC resulted in a final model with an AIC of 444.37, which was an improvement over the full model's AIC of 448.74, by excluding variables like alcohol, adiposity, obesity, and systolic blood pressure due to their minimal contribution. The model's calibration was supported by the Hosmer-Lemeshow goodness-of-fit test (p = 0.2272), indicating no significant difference between observed and expected outcomes. The ROC curve analysis yielded an AUC of 0.79, showcasing good classification performance, with an optimal threshold of 0.29 for balancing sensitivity (83%) and specificity (63%), which is suitable for a screening model where identifying true CHD cases is critical.
+
+# Conclusion
+
+The logistic regression model effectively identified significant predictors of CHD risk, with family history emerging as the most influential factor, increasing the odds of CHD by 2.5 times. Modifiable risk factors like LDL cholesterol and tobacco use also showed substantial impacts, with each unit increase in LDL raising CHD odds by 18% and each additional cigarette per day increasing odds by 8.8%. Interestingly, the model revealed that Type A personality, often associated with stress and competitiveness, had a modest but statistically significant effect on CHD risk, suggesting psychological factors play a role in cardiovascular health. The absence of multicollinearity among the predictors and the model's good fit as indicated by diagnostic tests enhance the reliability of these findings. This model underscores the importance of both genetic predisposition and lifestyle factors in CHD risk assessment, advocating for targeted interventions like cholesterol management and smoking cessation to mitigate risk. Future research could explore the interaction effects between these predictors or incorporate additional variables to further refine the model's predictive accuracy.
+
+# Appendix
+
+\listoftables
+
+\listoffigures
+
+code: [Code](https://github.com/Sagnik-Chakravarty/University-of-Maryland/blob/main/Semester%202/SURV686/Project/Project_Sagnik.qmd)
